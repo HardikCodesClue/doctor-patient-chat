@@ -1,0 +1,65 @@
+<%- include('../layouts/header.ejs') -%>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0">Doctor Registration</h3>
+                    </div>
+                    <div class="card-body">
+                        <% if (error) { %>
+                            <div class="alert alert-danger" role="alert">
+                                <%= error %>
+                            </div>
+                        <% } %>
+                        <form action="/auth/doctor/register" method="POST">
+    
+                            <!-- First Name -->
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" value="<%= body?.firstName %>" required>
+                            </div>
+    
+                            <!-- Last Name -->
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" name="lastName"  value="<%= body?.lastName %>" required>
+                            </div>
+    
+                            <!-- Mobile Number -->
+                            <div class="form-group">
+                                <label for="mobile">Mobile Number</label>
+                                <input type="text" class="form-control" id="mobile" name="mobile" pattern="[0-9]{10}" maxlength="10" value="<%= body?.mobile %>" required>
+                                <small class="form-text text-muted">Enter a 10-digit mobile number</small>
+                            </div>
+    
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email"  value="<%= body?.email %>" required>
+                            </div>
+    
+                            <!-- Password -->
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" minlength="6" required>
+                                <small class="form-text text-muted">Password must be at least 6 characters long</small>
+                            </div>
+    
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-success btn-block">Register</button>
+
+                             <!-- Login links -->
+                    <div class="mt-4 text-center">
+                        <p class="mb-2">Already have an account?</p>
+                        <div class="btn-group" role="group" aria-label="Register Links">
+                            <a href="/auth/login" class="btn btn-outline-success mr-2">Login</a>
+                        </div>
+                    </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%- include('../layouts/footer') -%> 
