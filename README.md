@@ -37,8 +37,8 @@ If you need to update `npm`, you can make it using `npm`! Cool right? After runn
 
 ## Install
 
-    $ git clone https://github.com/HardikCodesClue/driver-patient-chat.git
-    $ cd driver-patient-chat
+    $ git clone https://github.com/HardikCodesClue/doctor-patient-chat.git
+    $ cd doctor-patient-chat
     $ npm install
 
 ## Configuration

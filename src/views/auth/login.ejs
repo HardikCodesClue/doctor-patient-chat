@@ -1,0 +1,51 @@
+<%- include('../layouts/header.ejs') -%>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Login</h3>
+                </div>
+                <div class="card-body">
+                    <% if (error) { %>
+                    <div class="alert alert-danger" role="alert">
+                        <%= error %>
+                    </div>
+                    <% } %>
+                    <form action="/auth/login" method="POST">
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="<%= body?.email %>"
+                                required>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+
+                    </form>
+                    
+                    <!-- Registration links -->
+                    <div class="mt-4 text-center">
+                        <p class="mb-2">Welcome! Ready to get started?</p>
+                        <div class="btn-group" role="group" aria-label="Register Links">
+                            <a href="/auth/doctor/register" class="btn btn-outline-primary mr-2">Register as a Doctor</a>
+                            <a href="/auth/patient/register" class="btn btn-outline-primary">Register as a Patient</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../layouts/footer') -%>
