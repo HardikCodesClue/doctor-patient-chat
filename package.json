@@ -1,0 +1,15 @@
+{
+  "name": "doctor-patient-chat",
+  "version": "1.0.0",
+  "description": "Welcome to our Doctor-Patient Chat App, where healthcare meets modern convenience. Designed with your well-being in mind, our app bridges the gap between you and your healthcare provider, offering seamless communication and timely medical advice whenever you need it.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "author": "Hardik",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
