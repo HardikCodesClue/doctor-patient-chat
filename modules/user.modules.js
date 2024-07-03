@@ -19,3 +19,13 @@ export const getUserByEmail = async (email) => {
     const result = await User.findOne({email});
     return result;
 };
+
+/**
+ * Get user by userType.
+ * @param {Object} userType - User userType.
+ * @returns {Promise<Object>} if user available user object else null.
+ */
+export const getUserByUserType = async (userType) => {
+    const result = await User.find({userType});
+    return result;
+};
