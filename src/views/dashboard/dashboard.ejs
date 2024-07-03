@@ -1,0 +1,176 @@
+<%- include('../layouts/header.ejs') -%>
+<link rel="stylesheet" href="/css/style.css"> <!-- Adjust path as necessary -->
+
+<div class="container">
+    <div class="text-right p-2">
+        <button class="btn btn-danger">
+            <a href="/auth/logout" class="logout-link">Logout</a>
+        </button>
+    </div>
+    <div class="row clearfix">
+        <div class="col-lg-12">
+            <div class="card chat-app">
+                <!-- People list (user selection area) -->
+                <div id="plist" class="people-list">
+                    <ul class="list-unstyled chat-list mt-2 mb-0">
+                        <!-- List items for chat users -->
+                        <% userData.forEach(function(user) { %>
+                            <li class="clearfix" id="user_<%= user._id %>" onclick="selectUser('<%= user._id %>', '<%= user.firstName %> <%= user.lastName %>', this)">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
+                                <div class="about">
+                                    <div class="name"><%= user.firstName %> <%= user.lastName %></div>
+                                </div>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
+                <!-- Chat section -->
+                <div class="chat">
+                    <!-- Chat header with recipient's name -->
+                    <div class="chat-header clearfix">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="chat-about">
+                                    <h6 class="m-b-0" id="recipientName">Recipient Name</h6>
+                                    <!-- Dynamic rendering of recipient's name -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chat history -->
+                    <div class="chat-history" id="chat-history">
+                        <div id="welcome-message" class="welcome-message">
+                            <span>Welcome to doctor patient chat</span>
+                        </div>
+                        <ul class="m-b-0" id="messages">
+                            <!-- Chat messages will be dynamically added here -->
+                        </ul>
+                    </div>
+                    <!-- Chat input area -->
+                    <div class="chat-message clearfix" id="chat-message" style="display: none;">
+                        <div class="input-group mb-0">
+                            <input type="text" class="form-control" id="messageInput" placeholder="Enter text here..." onkeydown="handleKeyDown(event)">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../layouts/footer') -%>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    // Establish socket connection
+    const socket = io();
+    let userId = ''; // Variable to store user ID
+    let recipientId = ''; // Variable to store recipient ID
+
+    // Function to select a user and start chat
+    function selectUser(id, name, element) {
+        // Show chat input area and hide welcome message
+        document.getElementById('chat-message').style.display = 'block';
+        document.getElementById('welcome-message').style.display = 'none';
+
+        // Remove 'active' class from all list items
+        const listItems = document.querySelectorAll('.list-unstyled.chat-list li');
+        listItems.forEach(item => item.classList.remove('active'));
+
+        // Add 'active' class to the selected list item
+        element.classList.add('active');
+        
+        // Set user ID (example: '<%= userId %>'; ensure this is set in your server-side rendering)
+        userId = '<%= userId %>';
+        recipientId = id; // Set recipient ID based on selected user
+
+        // Update recipient's name in the chat header
+        document.getElementById('recipientName').textContent = name;
+
+        // Join the chat room with selected user and recipient
+        joinRoom(userId, recipientId);
+    }
+
+    // Function to join the chat room
+    function joinRoom(userId, recipientId) {
+        socket.emit('join', { userId, recipientId });
+
+        // Example: Load old messages (assuming 'load old messages' event is emitted from server)
+        socket.on('load old messages', (messages) => {
+            const messagesElement = document.getElementById('messages');
+            messagesElement.innerHTML = '';
+            messages.forEach(msg => {
+                renderMessage(msg,false);
+            });
+        });
+    }
+
+    // Function to send a message
+    function sendMessage() {
+        const message = document.getElementById('messageInput').value.trim();
+        if (message !== '') {
+            const msg = {
+                sender: userId, // Use stored user ID
+                receiver: recipientId, // Use stored recipient ID
+                message: message,
+            };
+            // Emit the message to the server
+            socket.emit('chat message', msg);
+
+            // Clear input field after sending message
+            document.getElementById('messageInput').value = '';
+        }
+    }
+
+    // Handle Enter key press in message input
+    function handleKeyDown(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    // Function to render a message
+    function renderMessage(msg,check) {
+        if ((msg.sender === userId && msg.receiver === recipientId) ||
+         (msg.sender === recipientId && msg.receiver === userId)) {
+         const messages = document.getElementById('messages');
+         const item = document.createElement('li');
+         // Add different classes for sender's and receiver's messages
+         item.className = msg.sender === userId ? 'clearfix' : 'clearfix other-user';
+         const messageContent = msg.sender === userId ? 'my-message float-right' : 'other-message float-left';
+         item.innerHTML = `
+            <div class="message ${messageContent}">${msg.message}</div>`;
+         messages.appendChild(item);
+         scrollToBottom(); // Scroll to bottom after appending new message
+        }
+    }
+
+    // Function to scroll chat history to bottom
+    function scrollToBottom() {
+        const chatHistory = document.getElementById('chat-history');
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+
+    // Function to format message time (example)
+    function formatTime(timestamp) {
+        // Implement your own time formatting logic here
+        return new Date(timestamp).toLocaleTimeString();
+    }
+
+    // Join room on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        // Hide chat input area on initial load
+        document.getElementById('chat-message').style.display = 'none';
+        document.getElementById('recipientName').textContent = ""; // Clear recipient name
+
+        // Example: Automatically select the first user on page load
+        // You can trigger user selection programmatically if needed
+    });
+
+    // Listen for incoming messages
+    socket.on('chat message', (msg) => {
+        renderMessage(msg,true); // Render the new incoming message
+    });
+</script>
